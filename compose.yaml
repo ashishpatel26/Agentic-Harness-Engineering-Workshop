@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: docker.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_DB: workshop
+      POSTGRES_USER: workshop
+      POSTGRES_PASSWORD: ${WORKSHOP_POSTGRES_PASSWORD:?Set WORKSHOP_POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workshop -d workshop"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: docker.io/library/redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Containerfile
+    env_file: .env
+    environment:
+      WORKSHOP_DATABASE_URL: postgresql://workshop:${WORKSHOP_POSTGRES_PASSWORD}@postgres:5432/workshop
+      WORKSHOP_REDIS_URL: redis://redis:6379/0
+      WORKSHOP_MODEL_BASE_URL: http://host.containers.internal:11434
+      WORKSHOP_OLLAMA_EMBED_URL: http://host.containers.internal:11434/api/embeddings
+    ports:
+      - 127.0.0.1:8000:8000
+    volumes:
+      - workshop_data:/app/workshop/.workshop-data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: .
+      dockerfile: Containerfile
+    command: ["streamlit", "run", "workshop/ui.py", "--server.address=0.0.0.0", "--server.port=8501"]
+    env_file: .env
+    environment:
+      WORKSHOP_API_URL: http://api:8000
+    ports:
+      - 127.0.0.1:8501:8501
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  workshop_data:

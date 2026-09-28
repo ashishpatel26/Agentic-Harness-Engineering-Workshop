@@ -1,0 +1,12 @@
+[
+  {
+    "id": "pilot-with-open-deletion-gap",
+    "response": "A private pilot is possible, but deletion guarantees need verification.",
+    "reference": "A private VPC pilot is possible; the company documents do not verify deletion guarantees."
+  },
+  {
+    "id": "unsupported-throughput",
+    "response": "The platform guarantees production throughput for every workload.",
+    "reference": "Production throughput is unverified and must be tested during a bounded pilot."
+  }
+]

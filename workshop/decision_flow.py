@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from workshop.control import mock_email, validate_question, validate_report
 from workshop.crew import build_research_crew
+from workshop.nemo_guardrails import check_output
 from workshop.schemas import DecisionReport
 
 
@@ -47,8 +48,15 @@ class DecisionFlow(Flow[DecisionState]):
                 self.state.report = DecisionReport.model_validate(report)
                 valid, reason = validate_report(self.state.report)
                 if valid:
-                    self.state.failure = ""
-                    return True
+                    try:
+                        check_output(question, self.state.report.model_dump_json())
+                    except ValueError as error:
+                        self.state.failure = str(error)
+                    else:
+                        self.state.failure = ""
+                        return True
+                    self.state.retry_count = attempt + 1
+                    continue
                 self.state.failure = reason
             self.state.retry_count = attempt + 1
         return False

@@ -1,0 +1,10 @@
+.git
+.env
+.venv
+.venv-wsl
+.pytest_cache
+__pycache__
+*.pyc
+*.ipynb
+workshop/.workshop-data
+Proposal

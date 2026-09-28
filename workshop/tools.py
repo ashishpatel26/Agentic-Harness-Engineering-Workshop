@@ -40,7 +40,9 @@ def search_documents(query: str, limit: int = 2) -> list[dict[str, str]]:
 @tool("Calculate annual ROI")
 def roi_tool(annual_benefit: float, annual_cost: float) -> str:
     """Calculate a hypothetical annual ROI percentage from stated USD assumptions."""
-    value = calculate_annual_roi(annual_benefit, annual_cost)
+    from workshop.cache import cached_annual_roi
+
+    value = cached_annual_roi(annual_benefit, annual_cost)
     return json.dumps({"roi_percent": value, "status": "scenario, not a guarantee"})
 
 

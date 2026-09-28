@@ -10,3 +10,4 @@ __pycache__/
 workshop/.workshop-data/
 workshop/knowledge/
 !workshop/knowledge/.gitkeep
+.gstack/

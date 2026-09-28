@@ -88,10 +88,18 @@ For notebooks, select the project's `.venv` Python kernel. The notebooks are del
 | `12-evaluation` | Behavioral checks | Objective checks pass |
 | `13-project` | End-to-end assistant | Report and approval route work together |
 | `14-capstone` | Eight seeded harness faults | Diagnose and repair one or two faults |
+| `15-api` | FastAPI boundary | Requests cannot approve their own action |
+| `16-ui` | Streamlit client | UI calls API and displays cited evidence |
+| `17-lancedb-rag` | Separate LanceDB retrieval | Real source IDs, distinct from Knowledge |
+| `18-state` | PostgreSQL + Redis | Durable approvals; disposable cache |
+| `19-nemo-guardrails` | Ollama-backed NeMo rails | Input/output checks stay outside authorization |
+| `20-langfuse` | Opt-in remote tracing | Local trace still works offline |
+| `21-ragas` | Local-model factual score | Quality score separate from safety gates |
+| `22-podman` | Multi-service deployment | API/UI/services described by Compose |
 
 The sample company is fictional. Its documents are in `workshop/data/`. The external research tool returns a fixed fixture, and the email action only writes a local record under `workshop/.workshop-data/`. No lesson sends real mail or requires live web search. [Guided exercises](labs/lab-exercises.md), participant pre-work, the instructor runbook, slide source, one-page recap, and production-readiness checklist are included in this folder.
 
-The reference project's React/FastAPI finance portal is not copied into this different capstone. This proposal's core project is a source-backed enterprise AI decision assistant; its CLI is the runnable interface, and the same application entry point can later be called from an approved API or UI.
+The reference project's React finance portal is not copied into this different capstone. The core project is a source-backed enterprise AI decision assistant with a CLI. Advanced lessons wrap the same application entry point in FastAPI and a Streamlit client; see [setup.md](../setup.md) for installation and live-service prerequisites.
 
 ## Five questions for every topic
 

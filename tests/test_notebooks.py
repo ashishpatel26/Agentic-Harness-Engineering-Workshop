@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_every_topic_has_matching_notebook() -> None:
     scripts = sorted((ROOT / "workshop").glob("[0-9][0-9]-*/*.py"))
-    assert len(scripts) == 15
+    assert len(scripts) == 23
     for script in scripts:
         notebook_path = script.with_suffix(".ipynb")
         notebook = nbformat.read(notebook_path, as_version=4)

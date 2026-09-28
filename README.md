@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/Python-3.12-3670A0?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python 3.12" />
   <img src="https://img.shields.io/badge/CrewAI-1.15.22-15A88B?style=flat-square" alt="CrewAI 1.15.22" />
   <img src="https://img.shields.io/badge/uv-locked%20environment-6F57C8?style=flat-square" alt="uv locked environment" />
-  <img src="https://img.shields.io/badge/lessons-15%20script%20%2B%20notebook%20pairs-E2A84A?style=flat-square" alt="15 script and notebook pairs" />
+  <img src="https://img.shields.io/badge/lessons-23%20script%20%2B%20notebook%20pairs-E2A84A?style=flat-square" alt="23 script and notebook pairs" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-34495E?style=flat-square" alt="MIT License" /></a>
 </p>
 
@@ -35,6 +35,8 @@ Each topic is a folder with a runnable `1-topic.py` and a matching `1-topic.ipyn
 
 **Topics:** `agentic-ai` · `crewai` · `agent-harness` · `python` · `uv` · `mcp` · `rag` · `memory` · `multi-agent` · `flows` · `observability` · `evaluation`
 
+The [technology stack and setup guide](setup.md) distinguishes the runnable core from the advanced FastAPI, Streamlit, LanceDB, PostgreSQL, Redis, NeMo Guardrails, Langfuse, Ragas, and Podman extensions.
+
 ## Start here
 
 | Prerequisite | Why it is needed | How to get it |
@@ -45,7 +47,7 @@ Each topic is a folder with a runnable `1-topic.py` and a matching `1-topic.ipyn
 | **[`qwen3.5:4b`](https://ollama.com/library/qwen3.5:4b)** and **[`nomic-embed-text`](https://ollama.com/library/nomic-embed-text)** | Chat/tool use and Knowledge/Memory embeddings | `ollama pull qwen3.5:4b` and `ollama pull nomic-embed-text` |
 | **A terminal and Jupyter-capable editor** | Runs scripts and notebooks | JupyterLab is installed by `uv sync` |
 
-No Docker, PostgreSQL, Qdrant, or separate SQLite installation is required. CrewAI's local Knowledge storage uses the installed Chroma package, which uses embedded storage here; Python supplies SQLite. Workshop runtime files are kept under ignored `workshop/.workshop-data/`. See the [CrewAI Knowledge documentation](https://docs.crewai.com/v1.15.22/en/concepts/knowledge) for the distinction between built-in Knowledge storage and optional vector-store integrations.
+The **core track** needs no container engine, PostgreSQL, Qdrant, or separate SQLite installation. CrewAI's local Knowledge storage uses the installed Chroma package; Python supplies SQLite. Workshop runtime files are kept under ignored `workshop/.workshop-data/`. See the [CrewAI Knowledge documentation](https://docs.crewai.com/v1.15.22/en/concepts/knowledge) for the distinction between built-in Knowledge storage and optional vector-store integrations.
 
 ### Windows · PowerShell
 
@@ -117,6 +119,17 @@ For an approved hosted fallback, copy `.env.example` to `.env` and explicitly se
 | 09–10 | [Controls](workshop/09-control/) · [Recovery](workshop/10-resilience/) | Gate a mock action and resume interrupted work safely |
 | 11–12 | [Observability](workshop/11-observability/) · [Evaluation](workshop/12-evaluation/) | Trace decisions and turn behavior into repeatable checks |
 | 13–14 | [End-to-end project](workshop/13-project/) · [Capstone](workshop/14-capstone/) | Run the complete assistant and diagnose seeded harness faults |
+
+### Advanced extension · topics 15–22
+
+The [advanced setup](setup.md#advanced-track-end-to-end-application) adds a thin [FastAPI boundary](workshop/15-api/) and [Streamlit UI](workshop/16-ui/), a separate [LanceDB retriever](workshop/17-lancedb-rag/), [PostgreSQL and Redis](workshop/18-state/), [NeMo Guardrails using Ollama](workshop/19-nemo-guardrails/), opt-in [Langfuse traces](workshop/20-langfuse/), [Ragas evaluation](workshop/21-ragas/), and [Podman deployment](workshop/22-podman/). Each has the same script/notebook teaching pair. They do not change the core prerequisite path.
+
+```bash
+uv sync --locked --extra advanced --python 3.12
+uv run --extra advanced python tools/check_prerequisites.py --offline --advanced
+```
+
+The advanced code and Compose manifest are in place; live Ollama/Redis/PostgreSQL/Langfuse runs still require those services. The API's mock approval is instructor-token protected and never sends email. Do not expose the demo's shared tokens or fictional customer-scoping scheme as production authentication.
 
 Run a script or open its same-name notebook from the repository root:
 

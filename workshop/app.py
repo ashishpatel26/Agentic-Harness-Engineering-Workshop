@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from workshop.decision_flow import DecisionFlow
 from workshop.memory import build_memory, recall_constraints, remember_constraint
+from workshop.nemo_guardrails import check_input
+from workshop.langfuse_tracing import enable_langfuse
 
 
 def run_assistant(
@@ -14,6 +16,8 @@ def run_assistant(
     request_email: bool = False,
     approved: bool = False,
 ) -> tuple[DecisionFlow, str]:
+    enable_langfuse()
+    check_input(question)
     memory = build_memory()
     if remember:
         remember_constraint(memory, customer_id, remember)

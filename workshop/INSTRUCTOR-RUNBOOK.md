@@ -4,7 +4,7 @@ Use [plan.md](../plan.md) for full objectives and the proposal's schedule. This 
 
 ## Before participants arrive
 
-- Verify the exact `uv.lock`, Python 3.12, chat model, embedding model, MCP server, and all 15 notebook/script pairs on a target laptop.
+- Verify the exact `uv.lock`, Python 3.12, chat model, embedding model, MCP server, and the 15 core notebook/script pairs on a target laptop. Rehearse the eight advanced pairs separately if teaching the extension.
 - Rehearse the 9:00–5:30 schedule using a fresh environment. Keep a solution copy and a clean copy of the repo.
 - Start a help queue. For 100–150 attendees, arrange table-level support and pair work before opening the room.
 - Keep fictional sample documents as the default. Approved company documents are optional and must be tested separately.

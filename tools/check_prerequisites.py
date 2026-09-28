@@ -33,6 +33,89 @@ PACKAGES = (
     "nbformat",
     "pytest",
 )
+ADVANCED_PACKAGES = (
+    "fastapi", "uvicorn", "httpx", "streamlit", "psycopg", "redis",
+    "lancedb", "nemoguardrails", "langfuse", "ragas",
+    "openinference-instrumentation-crewai", "podman-compose",
+)
+
+
+def check_advanced(*, offline: bool) -> bool:
+    """Return True if an advanced-track required check failed."""
+    failed = False
+    print("\nAdvanced-track prerequisites\n")
+    for package in ADVANCED_PACKAGES:
+        try:
+            version = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            print_check(package, "FAIL", "Install with uv sync --locked --extra advanced")
+            failed = True
+        else:
+            print_check(package, "PASS", version)
+
+    podman = shutil.which("podman")
+    print_check("Podman", "PASS" if podman else "FAIL", podman or "Not on PATH")
+    failed |= not bool(podman)
+    if podman:
+        try:
+            result = subprocess.run(
+                [podman, "compose", "version"], capture_output=True, text=True,
+                check=False, timeout=10,
+            )
+            print_check("Compose provider", "PASS" if result.returncode == 0 else "FAIL",
+                        result.stdout.strip().splitlines()[-1] if result.stdout.strip()
+                        else result.stderr.strip().splitlines()[-1] if result.stderr.strip() else "Unavailable")
+            failed |= result.returncode != 0
+        except (OSError, subprocess.TimeoutExpired) as error:
+            print_check("Compose provider", "FAIL", str(error))
+            failed = True
+
+    if offline:
+        print_check("PostgreSQL", "SKIP", "Offline mode")
+        print_check("Redis", "SKIP", "Offline mode")
+        print_check("Langfuse", "SKIP", "Offline mode")
+        return failed
+
+    dsn = os.getenv("WORKSHOP_DATABASE_URL", "").strip()
+    if not dsn:
+        print_check("PostgreSQL", "FAIL", "Set WORKSHOP_DATABASE_URL")
+        failed = True
+    else:
+        try:
+            from workshop.persistence import PostgresRunStore
+            ok = PostgresRunStore(dsn).ping()
+            print_check("PostgreSQL", "PASS" if ok else "FAIL", "SELECT 1")
+            failed |= not ok
+        except Exception as error:
+            print_check("PostgreSQL", "FAIL", str(error))
+            failed = True
+
+    redis_url = os.getenv("WORKSHOP_REDIS_URL", "").strip()
+    if not redis_url:
+        print_check("Redis", "FAIL", "Set WORKSHOP_REDIS_URL")
+        failed = True
+    else:
+        try:
+            import redis
+            ok = bool(redis.Redis.from_url(redis_url, socket_connect_timeout=2, socket_timeout=2).ping())
+            print_check("Redis", "PASS" if ok else "FAIL", "PING")
+            failed |= not ok
+        except Exception as error:
+            print_check("Redis", "FAIL", str(error))
+            failed = True
+
+    if os.getenv("WORKSHOP_LANGFUSE_ENABLED", "false").lower() == "true":
+        try:
+            from langfuse import get_client
+            ok = bool(get_client().auth_check())
+            print_check("Langfuse", "PASS" if ok else "FAIL", "Project authentication")
+            failed |= not ok
+        except Exception as error:
+            print_check("Langfuse", "FAIL", str(error))
+            failed = True
+    else:
+        print_check("Langfuse", "SKIP", "Remote tracing disabled")
+    return failed
 
 
 def ollama_tags_url(configured_url: str) -> str:
@@ -67,6 +150,7 @@ def print_check(label: str, status: str, detail: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--offline", action="store_true", help="Skip the model-service connection check")
+    parser.add_argument("--advanced", action="store_true", help="Also check the advanced API/UI and service stack")
     args = parser.parse_args()
 
     try:
@@ -175,6 +259,9 @@ def main() -> int:
             has_key = bool(os.getenv("OPENAI_API_KEY"))
             print_check("OpenAI API key", "PASS" if has_key else "FAIL", "Configured" if has_key else "Not set")
             failed |= not has_key
+
+    if args.advanced:
+        failed |= check_advanced(offline=args.offline)
 
     print("\n" + ("NOT READY: resolve FAIL items above." if failed else "READY: checked prerequisites passed."))
     return int(failed)

@@ -1,5 +1,7 @@
 """A focused Researcher → Analyst → Critic Crew."""
 
+import os
+
 from crewai import Agent, Crew, Process, Task
 
 from workshop.common import model
@@ -11,12 +13,18 @@ from workshop.tools import company_search_tool, research_tool, roi_tool
 def build_research_crew(*, with_knowledge: bool = True) -> Crew:
     llm = model()
     sources, embedder = sample_knowledge()
+    researcher_tools = [company_search_tool, research_tool]
+    if os.getenv("WORKSHOP_LANCEDB_RAG_ENABLED", "false").lower() == "true":
+        from workshop.retrieval import index_documents, lancedb_search_tool
+
+        index_documents()
+        researcher_tools.append(lancedb_search_tool)
     researcher = Agent(
         role="Enterprise AI Researcher",
         goal="Gather source-backed facts about the proposed technology",
         backstory="You distinguish evidence from assumptions.",
         llm=llm,
-        tools=[company_search_tool, research_tool],
+        tools=researcher_tools,
         max_iter=4,
         max_execution_time=120,
         allow_delegation=False,
