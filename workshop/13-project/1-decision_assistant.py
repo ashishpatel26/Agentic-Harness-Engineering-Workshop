@@ -1,0 +1,41 @@
+# %% [markdown]
+# # 13 — The complete decision assistant
+# This is the same Crew and Flow from earlier lessons. The CLI supplies one
+# request, a customer identity, and an explicit approval flag for a local mock
+# email. No external email service is connected.
+
+# %%
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()))
+
+from workshop.app import run_assistant
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--question", default="Should Northstar AI pilot Meridian AI?")
+parser.add_argument("--customer", default="customer-a")
+parser.add_argument("--remember", help="Store a customer constraint before this run")
+parser.add_argument("--request-email", action="store_true")
+parser.add_argument("--approve-email", action="store_true")
+args, _ = parser.parse_known_args()
+if args.approve_email and not args.request_email:
+    parser.error("--approve-email requires --request-email")
+
+# %% [markdown]
+# ## Run the end-to-end Flow
+# Inspect the recommendation, the citation IDs, and the selected route.
+# Try --request-email first, then explicitly add --approve-email.
+
+# %%
+flow, output = run_assistant(
+    question=args.question,
+    customer_id=args.customer,
+    remember=args.remember,
+    request_email=args.request_email,
+    approved=args.approve_email,
+)
+print(output)
+print("Report:", flow.state.report)
+print("Action:", flow.state.action_result or "none")

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Agentic Harness Engineering Workshop</title>
+  <desc id="desc">A dark illustrated banner showing the path from Python to CrewAI agents, tools, memory, flows, traces, and evaluation.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1425"/>
+      <stop offset="1" stop-color="#122c36"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#6ee7cf"/>
+      <stop offset="1" stop-color="#f4ca79"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="1200" height="360" rx="20" fill="url(#background)"/>
+  <circle cx="1030" cy="70" r="116" fill="#42d6be" opacity=".14" filter="url(#glow)"/>
+  <circle cx="1120" cy="295" r="140" fill="#e1af62" opacity=".09" filter="url(#glow)"/>
+  <g fill="none" stroke="#456b78" stroke-width="2" opacity=".7">
+    <path d="M865 98 980 65 1097 119 1065 235 927 264 832 198Z"/>
+    <path d="M865 98 927 264M980 65 1065 235M1097 119 832 198"/>
+  </g>
+  <g fill="#6ee7cf">
+    <circle cx="865" cy="98" r="7"/><circle cx="980" cy="65" r="7"/>
+    <circle cx="1097" cy="119" r="7"/><circle cx="1065" cy="235" r="7"/>
+    <circle cx="927" cy="264" r="7"/><circle cx="832" cy="198" r="7"/>
+  </g>
+  <circle cx="977" cy="166" r="45" fill="#142f38" stroke="url(#accent)" stroke-width="3"/>
+  <path d="M954 166h46m-23-23v46" stroke="url(#accent)" stroke-width="4" stroke-linecap="round"/>
+  <rect x="48" y="43" width="200" height="28" rx="14" fill="#1b3c46"/>
+  <text x="64" y="62" fill="#9df1df" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" letter-spacing="2">HANDS-ON · ZERO TO HERO</text>
+  <text x="48" y="137" fill="#f5f9f7" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700">Agentic Harness</text>
+  <text x="48" y="190" fill="#f5f9f7" font-family="Arial, Helvetica, sans-serif" font-size="43" font-weight="700">Engineering Workshop</text>
+  <text x="49" y="234" fill="#bdd0d1" font-family="Arial, Helvetica, sans-serif" font-size="20">Build agents that can act, remember, recover, and explain why.</text>
+  <path d="M49 269h628" stroke="url(#accent)" stroke-width="2" opacity=".8"/>
+  <text x="49" y="304" fill="#80e8d0" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">PYTHON</text>
+  <text x="140" y="304" fill="#829a9e" font-family="Arial, Helvetica, sans-serif" font-size="15">→</text>
+  <text x="173" y="304" fill="#80e8d0" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">CREWAI</text>
+  <text x="266" y="304" fill="#829a9e" font-family="Arial, Helvetica, sans-serif" font-size="15">→</text>
+  <text x="298" y="304" fill="#80e8d0" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">TOOLS</text>
+  <text x="373" y="304" fill="#829a9e" font-family="Arial, Helvetica, sans-serif" font-size="15">→</text>
+  <text x="405" y="304" fill="#80e8d0" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">MEMORY</text>
+  <text x="505" y="304" fill="#829a9e" font-family="Arial, Helvetica, sans-serif" font-size="15">→</text>
+  <text x="538" y="304" fill="#f4ca79" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="1">HARNESS</text>
+</svg>

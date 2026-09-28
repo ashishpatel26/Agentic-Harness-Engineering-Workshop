@@ -1,0 +1,12 @@
+.venv/
+.venv-wsl/
+.env
+.pytest_cache/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.checkpoints/
+.crewai/
+workshop/.workshop-data/
+workshop/knowledge/
+!workshop/knowledge/.gitkeep
