@@ -7,7 +7,8 @@
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()
+here = Path(__file__).resolve() if "__file__" in globals() else Path.cwd() / "lesson.py"
+ROOT = next(p for p in here.parents if (p / "pyproject.toml").exists())
 sys.path.insert(0, str(ROOT))
 
 import workshop  # configure project-local CrewAI storage

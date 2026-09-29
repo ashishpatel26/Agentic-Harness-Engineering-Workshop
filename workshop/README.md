@@ -31,7 +31,7 @@ Diagrams and concept notes are notebook-only; executable code stays synchronized
 - `uv` installed at OS level.
 - Python 3.12, installed automatically by `uv` if needed.
 - Primary model path: Ollama and a tool-capable model such as `qwen3.5:4b`, plus `nomic-embed-text` for Knowledge and Memory. Confirm that this pair works on the actual workshop laptops before the event. A hosted model can replace the chat model, but the embedding provider must also be configured explicitly.
-- Run commands from the repository root. A notebook kernel should also start with this root as its working directory.
+- Run script commands from the repository root. Notebooks work from any folder inside the repository: each finds the repository root by looking upward for `pyproject.toml`, so VS Code's default (kernel starts in the notebook's own folder) is fine. Select the project's `.venv` Python as the kernel.
 
 ## Windows setup (PowerShell)
 
