@@ -43,3 +43,21 @@ if args.resume:
     print(crew.kickoff(from_checkpoint=CheckpointConfig(restore_from=str(args.resume))).raw)
 else:
     print(crew.kickoff().raw)
+
+# %% [markdown]
+# ## Bonus scenario — writing a book chapter by chapter
+# The idea behind resuming, without a model (inspired by CrewAI's *Write a Book* flow):
+# finished work is saved, so a re-run skips it. Run this cell twice.
+
+# %%
+from workshop.common import ensure_runtime
+
+book = ensure_runtime() / "book"
+book.mkdir(exist_ok=True)
+for number, title in enumerate(["Why agents", "Tools", "Flows"], start=1):
+    chapter = book / f"chapter-{number}.txt"
+    if chapter.exists():
+        print("skip (already written):", title)
+        continue
+    chapter.write_text(f"Draft of {title}", encoding="utf-8")  # stands in for a slow Crew run
+    print("wrote:", title)

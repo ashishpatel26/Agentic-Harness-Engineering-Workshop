@@ -94,3 +94,21 @@ result = crew.kickoff(inputs={
     "customer_context": "Customer A requires private VPC deployment.",
 })
 print(result.pydantic or result.raw)
+
+# %% [markdown]
+# ## Bonus scenario — a two-person content team
+# Fewer roles can be enough (inspired by CrewAI's *Content Creator* flow).
+# Compare this two-agent Crew with the three-agent Crew above.
+# It is shorter than the run above, but still two model tasks on a local model.
+
+# %%
+writer = Agent(role="Writer", goal="Draft a short post", backstory="You write plainly.", llm=llm, allow_delegation=False)
+editor = Agent(role="Editor", goal="Cut the draft to 60 words", backstory="You remove filler.", llm=llm, allow_delegation=False)
+draft = Task(description="Draft a post on why AI agents need tests.", expected_output="A short draft.", agent=writer)
+edit = Task(
+    description="Edit the draft to at most 60 words.",
+    expected_output="The final post.",
+    agent=editor,
+    context=[draft],
+)
+print(Crew(agents=[writer, editor], tasks=[draft, edit], process=Process.sequential).kickoff().raw)

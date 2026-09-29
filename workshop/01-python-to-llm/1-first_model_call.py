@@ -31,3 +31,19 @@ response = model().call(
     "or reject in two sentences. State what is still unknown."
 )
 print("Model response:", response)
+
+# %% [markdown]
+# ## Bonus scenario — a marketing tagline
+# Same lesson, different job (inspired by CrewAI's *Marketing Strategy* example).
+# A template always sounds the same; the model adapts to the product.
+
+# %%
+def fixed_tagline(product: str) -> str:
+    return f"Introducing {product}: the best choice for you."
+
+
+print("Template:", fixed_tagline("TrailMix Bars"))
+print("Model:", model().call(
+    "Write one playful tagline of at most 10 words for TrailMix Bars, "
+    "a snack for hikers. Output only the tagline."
+))

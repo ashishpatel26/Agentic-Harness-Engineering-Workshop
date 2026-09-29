@@ -45,3 +45,27 @@ with MCPServerAdapter(server) as tools:
         agent=analyst,
     )
     print(Crew(agents=[analyst], tasks=[task], process=Process.sequential).kickoff().raw)
+
+# %% [markdown]
+# ## Bonus scenario — a party planner
+# The same server now offers a second, unrelated tool. The agent picks the
+# right one from the descriptions alone, which is why tool descriptions matter.
+
+# %%
+with MCPServerAdapter(server) as tools:
+    print("MCP tools:", [item.name for item in tools])
+    planner = Agent(
+        role="Party Planner",
+        goal="Order the right amount of food",
+        backstory="You never run out of pizza.",
+        llm=model(),
+        tools=tools,
+        max_iter=3,
+        allow_delegation=False,
+    )
+    order = Task(
+        description="We are 14 people and each eats 3 slices. How many pizzas do we order?",
+        expected_output="The number of pizzas, from the tool.",
+        agent=planner,
+    )
+    print(Crew(agents=[planner], tasks=[order], process=Process.sequential).kickoff().raw)

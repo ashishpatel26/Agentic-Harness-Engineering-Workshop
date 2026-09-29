@@ -50,3 +50,26 @@ task = Task(
 )
 result = Crew(agents=[researcher], tasks=[task], process=Process.sequential).kickoff()
 print(result.raw)
+
+# %% [markdown]
+# ## Bonus scenario — a surprise trip
+# One agent, one task, explicit limits (inspired by CrewAI's *Surprise Trip* example).
+# Check the answer against the budget yourself: the agent may not add correctly.
+
+# %%
+planner = Agent(
+    role="Surprise Trip Planner",
+    goal="Plan a one-day outing that fits the budget",
+    backstory="You love small, memorable adventures.",
+    llm=model(),
+    max_iter=3,
+    max_execution_time=240,
+    allow_delegation=False,
+)
+trip = Task(
+    description="Plan a one-day surprise outing in Pune for two friends who like "
+    "food and hills. Total budget: 2,000 INR. Give a 2-stop itinerary.",
+    expected_output="A 2-stop itinerary with a rough cost for each stop.",
+    agent=planner,
+)
+print(Crew(agents=[planner], tasks=[trip], process=Process.sequential).kickoff().raw)

@@ -60,3 +60,35 @@ task = Task(
     agent=analyst,
 )
 print(Crew(agents=[analyst], tasks=[task], process=Process.sequential).kickoff().raw)
+
+# %% [markdown]
+# ## Bonus scenario — a job posting
+# A second tool for a different job (inspired by CrewAI's *Job Posting* example).
+# The tool rejects an unknown level, and the agent sees that error as an observation.
+
+# %%
+@tool("Salary band lookup")
+def salary_band(level: str) -> str:
+    """Return the fictional Northstar salary band in USD for a level: junior, mid, or senior."""
+    bands = {"junior": "60k-80k", "mid": "80k-110k", "senior": "110k-150k"}
+    if level.lower() not in bands:
+        raise ValueError(f"unknown level '{level}'; use junior, mid, or senior")
+    return json.dumps({"level": level.lower(), "band_usd": bands[level.lower()]})
+
+
+recruiter = Agent(
+    role="Recruiter",
+    goal="Write accurate job ads",
+    backstory="You never invent pay figures.",
+    llm=model(),
+    tools=[salary_band],
+    max_iter=3,
+    allow_delegation=False,
+)
+ad = Task(
+    description="Write a two-sentence job ad for a senior agent engineer. "
+    "Look up the salary band with the tool and include it.",
+    expected_output="Two sentences that include the band from the tool.",
+    agent=recruiter,
+)
+print(Crew(agents=[recruiter], tasks=[ad], process=Process.sequential).kickoff().raw)
