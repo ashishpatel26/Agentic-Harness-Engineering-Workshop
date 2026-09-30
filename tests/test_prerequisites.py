@@ -13,10 +13,10 @@ def test_ollama_tags_uses_configured_host() -> None:
 
 
 def test_model_list_handles_both_ollama_name_fields() -> None:
-    names = installed_model_names({"models": [{"name": "qwen3.5:4b"}, {"model": "nomic-embed-text"}]})
-    assert names == {"qwen3.5:4b", "nomic-embed-text"}
-    assert is_model_present("qwen3.5:4b", names)
-    assert is_model_present("qwen3.5:4b", {"library/qwen3.5:4b"})
+    names = installed_model_names({"models": [{"name": "qwen2.5:7b"}, {"model": "nomic-embed-text"}]})
+    assert names == {"qwen2.5:7b", "nomic-embed-text"}
+    assert is_model_present("qwen2.5:7b", names)
+    assert is_model_present("qwen2.5:7b", {"library/qwen2.5:7b"})
     assert not is_model_present("missing:latest", names)
     with pytest.raises(ValueError):
         installed_model_names({"models": "not a list"})

@@ -7,7 +7,8 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()))
+here = Path(__file__).resolve() if "__file__" in globals() else Path.cwd() / "lesson.py"
+sys.path.insert(0, str(next(p for p in here.parents if (p / "pyproject.toml").exists())))
 
 import workshop  # configure project-local CrewAI storage
 from crewai import Agent, Crew, Process, Task
@@ -50,3 +51,26 @@ task = Task(
 )
 result = Crew(agents=[researcher], tasks=[task], process=Process.sequential).kickoff()
 print(result.raw)
+
+# %% [markdown]
+# ## Bonus scenario — a surprise trip
+# One agent, one task, explicit limits (inspired by CrewAI's *Surprise Trip* example).
+# Check the answer against the budget yourself: the agent may not add correctly.
+
+# %%
+planner = Agent(
+    role="Surprise Trip Planner",
+    goal="Plan a one-day outing that fits the budget",
+    backstory="You love small, memorable adventures.",
+    llm=model(),
+    max_iter=3,
+    max_execution_time=240,
+    allow_delegation=False,
+)
+trip = Task(
+    description="Plan a one-day surprise outing in Pune for two friends who like "
+    "food and hills. Total budget: 2,000 INR. Give a 2-stop itinerary.",
+    expected_output="A 2-stop itinerary with a rough cost for each stop.",
+    agent=planner,
+)
+print(Crew(agents=[planner], tasks=[trip], process=Process.sequential).kickoff().raw)

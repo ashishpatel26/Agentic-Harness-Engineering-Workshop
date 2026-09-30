@@ -8,7 +8,8 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()))
+here = Path(__file__).resolve() if "__file__" in globals() else Path.cwd() / "lesson.py"
+sys.path.insert(0, str(next(p for p in here.parents if (p / "pyproject.toml").exists())))
 
 from workshop.common import model
 
@@ -31,3 +32,19 @@ response = model().call(
     "or reject in two sentences. State what is still unknown."
 )
 print("Model response:", response)
+
+# %% [markdown]
+# ## Bonus scenario — a marketing tagline
+# Same lesson, different job (inspired by CrewAI's *Marketing Strategy* example).
+# A template always sounds the same; the model adapts to the product.
+
+# %%
+def fixed_tagline(product: str) -> str:
+    return f"Introducing {product}: the best choice for you."
+
+
+print("Template:", fixed_tagline("TrailMix Bars"))
+print("Model:", model().call(
+    "Write one playful tagline of at most 10 words for TrailMix Bars, "
+    "a snack for hikers. Output only the tagline."
+))

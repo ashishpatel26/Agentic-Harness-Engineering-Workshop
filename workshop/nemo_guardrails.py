@@ -5,6 +5,8 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 
+from workshop.common import model_name
+
 
 def enabled() -> bool:
     return os.getenv("WORKSHOP_NEMO_ENABLED", "false").lower() == "true"
@@ -14,7 +16,7 @@ def enabled() -> bool:
 def _rails():
     from nemoguardrails import LLMRails, RailsConfig
 
-    model = os.getenv("WORKSHOP_MODEL", "ollama/qwen3.5:4b")
+    model = model_name()
     if not model.startswith("ollama/"):
         raise ValueError("NeMo workshop rails require an Ollama WORKSHOP_MODEL")
     base_url = os.getenv("WORKSHOP_MODEL_BASE_URL", "http://localhost:11434").rstrip("/")

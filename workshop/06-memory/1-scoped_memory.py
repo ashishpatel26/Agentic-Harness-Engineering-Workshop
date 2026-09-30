@@ -7,7 +7,8 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()))
+here = Path(__file__).resolve() if "__file__" in globals() else Path.cwd() / "lesson.py"
+sys.path.insert(0, str(next(p for p in here.parents if (p / "pyproject.toml").exists())))
 
 import workshop  # configure project-local CrewAI storage
 from crewai import Memory
@@ -37,3 +38,15 @@ for customer in ("customer-a", "customer-b"):
     matches = memory.recall("deployment preference", scope=customer_scope(customer), limit=3)
     print(customer, [match.record.content for match in matches])
 print("Memory tree:\n", memory.tree())
+
+# %% [markdown]
+# ## Bonus scenario — team meeting notes
+# Scopes work for any grouping, here teams (inspired by CrewAI's *Meeting Assistant* example).
+# Each team's action item stays in its own scope.
+
+# %%
+memory.remember("Design team: send the new logo files to marketing by Friday.", scope="/team/design")
+memory.remember("Data team: retrain the churn model after the schema change.", scope="/team/data")
+for team in ("design", "data"):
+    matches = memory.recall("what is the action item?", scope=f"/team/{team}", limit=2)
+    print(team, [match.record.content for match in matches])

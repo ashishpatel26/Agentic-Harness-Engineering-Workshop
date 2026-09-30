@@ -9,7 +9,8 @@ import argparse
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()))
+here = Path(__file__).resolve() if "__file__" in globals() else Path.cwd() / "lesson.py"
+sys.path.insert(0, str(next(p for p in here.parents if (p / "pyproject.toml").exists())))
 
 from workshop.app import run_assistant
 
@@ -39,3 +40,12 @@ flow, output = run_assistant(
 print(output)
 print("Report:", flow.state.report)
 print("Action:", flow.state.action_result or "none")
+
+# %% [markdown]
+# ## Bonus scenarios — same assistant, different questions
+# The Flow does not care what the question is, as long as the documents can
+# answer it. Re-run the cell above with one of these using `--question`:
+# - "Does Meridian AI support private VPC deployment?"
+# - "What is the biggest security risk of piloting Meridian AI?"
+# - "Is the $45,000 annual benefit realistic given the pricing document?"
+# Then compare the evidence IDs the report cites for each one.

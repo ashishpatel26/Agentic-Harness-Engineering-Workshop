@@ -215,7 +215,7 @@ def main() -> int:
     if os.name != "nt" and (project_env / "Scripts" / "python.exe").exists():
         print_check("Environment", "WARN", "Repository .venv is Windows-native; WSL/Linux needs a separate uv environment")
 
-    model = os.getenv("WORKSHOP_MODEL", "ollama/qwen3.5:4b")
+    model = os.getenv("WORKSHOP_MODEL", "ollama/qwen2.5:7b")
     embed_provider = os.getenv("WORKSHOP_EMBEDDING_PROVIDER", "ollama")
     model_url = os.getenv("WORKSHOP_MODEL_BASE_URL", "http://localhost:11434")
     embed_url = os.getenv("WORKSHOP_OLLAMA_EMBED_URL", "http://localhost:11434/api/embeddings")

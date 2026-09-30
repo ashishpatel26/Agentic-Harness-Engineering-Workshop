@@ -7,7 +7,8 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] if "__file__" in globals() else Path.cwd()))
+here = Path(__file__).resolve() if "__file__" in globals() else Path.cwd() / "lesson.py"
+sys.path.insert(0, str(next(p for p in here.parents if (p / "pyproject.toml").exists())))
 
 from workshop.control import mock_email, validate_question, validate_report
 from workshop.schemas import DecisionReport, Evidence
@@ -38,3 +39,33 @@ print("Output check:", validate_report(report))
 print(mock_email(report, approved=False, action_id="lesson-09-demo"))
 print(mock_email(report, approved=True, action_id="lesson-09-demo"))
 print(mock_email(report, approved=True, action_id="lesson-09-demo"))
+
+# %% [markdown]
+# ## Bonus scenario — an email auto-responder
+# A task guardrail checks a draft before it is accepted (inspired by CrewAI's
+# *Email Auto Responder* flow). Test the check on plain text first.
+
+# %%
+from crewai import Agent, Crew, Process, Task, TaskOutput
+
+from workshop.common import model
+
+
+def no_promises(output: TaskOutput) -> tuple[bool, str]:
+    if "guarantee" in output.raw.lower():
+        return False, "Do not promise guarantees; offer to look into it instead."
+    return True, output.raw
+
+
+print(no_promises(TaskOutput(description="d", raw="We guarantee a refund.", agent="a")))
+print(no_promises(TaskOutput(description="d", raw="We will look into your order.", agent="a")))
+
+support = Agent(role="Support Agent", goal="Reply politely", backstory="You never over-promise.", llm=model(), allow_delegation=False)
+reply = Task(
+    description="Reply in two sentences to a customer whose parcel is late.",
+    expected_output="A polite two-sentence reply.",
+    agent=support,
+    guardrail=no_promises,
+    guardrail_max_retries=1,
+)
+print(Crew(agents=[support], tasks=[reply], process=Process.sequential).kickoff().raw)

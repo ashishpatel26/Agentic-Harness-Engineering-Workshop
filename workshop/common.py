@@ -14,11 +14,18 @@ RUNTIME = WORKSHOP / ".workshop-data"
 load_dotenv(ROOT / ".env")
 
 
+DEFAULT_MODEL = "ollama/qwen2.5:7b"  # the one chat model used by every lesson
+
+
+def model_name() -> str:
+    return os.getenv("WORKSHOP_MODEL", DEFAULT_MODEL)
+
+
 def model():
     """Use an explicit model; never silently fall back to a paid provider."""
     from crewai import LLM
 
-    name = os.getenv("WORKSHOP_MODEL", "ollama/qwen3.5:4b")
+    name = model_name()
     settings: dict[str, object] = {"model": name, "temperature": 0}
     if name.startswith("ollama/"):
         settings["base_url"] = os.getenv("WORKSHOP_MODEL_BASE_URL", "http://localhost:11434")

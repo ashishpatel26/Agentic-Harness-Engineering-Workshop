@@ -326,6 +326,73 @@ STEP_NOTES = {
 }
 
 
+# The whole workshop as one tree. Each notebook shows it with its own layer(s)
+# flagged, so learners always see where a lesson sits in the complete system.
+# Labels are " NN NAME"; the trailing {NN} token becomes the marker (or nothing).
+WORKSHOP_MAP = """USER · CLI · API
+   │
+   ▼
+ 13 PROJECT        run_assistant(): memory in → Flow → report out{13}
+   │
+   ├─ 06 MEMORY          recall this customer's saved constraint{06}
+   ├─ 09 CONTROL         validate the question before any model call{09}
+   ├─ 08 FLOW            typed state · route · one bounded retry{08}
+   │    └─ 07 CREW            Researcher → Analyst → Critic{07}
+   │         └─ 02 AGENT LOOP      model decides → tool runs → observation → answer{02}
+   │              ├─ 01 MODEL          the LLM call itself{01}
+   │              ├─ 03 TOOLS          typed Python functions the agent may call{03}
+   │              ├─ 04 MCP            tools served by a separate process{04}
+   │              └─ 05 KNOWLEDGE      cited passages from company documents{05}
+   └─ 09 CONTROL         validate the report → human approval → mock email{09b}
+
+ around everything:
+   10 RESILIENCE      checkpoint and resume{10}
+   11 OBSERVABILITY   trace what actually ran{11}
+   12 EVALUATION      checks that fail loudly{12}"""
+
+# Which map rows each folder highlights. Advanced folders extend a basic layer.
+HIGHLIGHT = {
+    "00-verify": [],
+    "01-python-to-llm": ["01"], "02-agent-loop": ["02"], "03-tools": ["03"], "04-mcp": ["04"],
+    "05-knowledge": ["05"], "06-memory": ["06"], "07-crews": ["07"], "08-flows": ["08"],
+    "09-control": ["09", "09b"], "10-resilience": ["10"], "11-observability": ["11"],
+    "12-evaluation": ["12"], "13-project": ["13"],
+    "14-capstone": ["13", "06", "09", "09b", "08", "07", "02", "01", "03", "04", "05", "10", "11", "12"],
+    "15-api": ["13"], "16-ui": ["13"], "17-lancedb-rag": ["05"], "18-state": ["10"],
+    "19-nemo-guardrails": ["09", "09b"], "20-langfuse": ["11"], "21-ragas": ["12"], "22-podman": ["13"],
+}
+
+# Basic lesson number, or the basic lesson an advanced folder extends.
+LESSON_OF = {
+    "00-verify": "Setup check before lesson 1.",
+    "14-capstone": "Finale after lesson 13: fix the broken harness.",
+    "15-api": "Advanced follow-up to lesson 13 (project).",
+    "16-ui": "Advanced follow-up to lesson 13 (project).",
+    "17-lancedb-rag": "Advanced follow-up to lesson 5 (knowledge).",
+    "18-state": "Advanced follow-up to lesson 10 (resilience).",
+    "19-nemo-guardrails": "Advanced follow-up to lesson 9 (control).",
+    "20-langfuse": "Advanced follow-up to lesson 11 (observability).",
+    "21-ragas": "Advanced follow-up to lesson 12 (evaluation).",
+    "22-podman": "Advanced follow-up to lesson 13 (project).",
+}
+
+
+def workshop_map(folder: str) -> str:
+    """Render the whole-workshop tree with this lesson's rows flagged."""
+    lit = HIGHLIGHT[folder]
+    text = WORKSHOP_MAP
+    for key in ("13", "06", "09b", "09", "08", "07", "02", "01", "03", "04", "05", "10", "11", "12"):
+        text = text.replace("{" + key + "}", "   ◀ YOU ARE HERE" if key in lit else "")
+    return text
+
+
+def lesson_line(folder: str) -> str:
+    number = folder.split("-")[0]
+    if folder in LESSON_OF:
+        return f"**{LESSON_OF[folder]}**"
+    return f"**Basic lesson {int(number)} of 13.**"
+
+
 def cells_from_script(source: str) -> list[dict[str, object]]:
     cells: list[dict[str, object]] = []
     kind = "code"
@@ -361,38 +428,41 @@ def main() -> None:
         problem, concept, architecture, exercise, check = GUIDES[script.parent.name]
         folder = script.parent.name
         intro = [
+            {"cell_type": "markdown", "metadata": {}, "source": [lesson_line(folder) + "\n"]},
             {"cell_type": "markdown", "metadata": {}, "source": [f"## Problem\n\n{problem}\n"]},
             {"cell_type": "markdown", "metadata": {}, "source": [
                 f"## Concept\n\n{concept}\n\n"
                 f"{CONCEPT_DETAILS[folder]}\n"
             ]},
             {"cell_type": "markdown", "metadata": {}, "source": [
-                f"## Abstraction\n\n{architecture}. This is the smallest new layer introduced "
-                "by this lesson; the earlier layers remain in place.\n"
+                "## Where this fits in the whole workshop\n\n"
+                f"```text\n{workshop_map(folder)}\n```\n\n"
+                "The flagged row is what this lesson adds. Every other row is the same "
+                "system, taught in its own lesson.\n"
             ]},
             {"cell_type": "markdown", "metadata": {}, "source": [
-                f"## Architecture\n\n```text\n{ARCHITECTURES[folder]}\n```\n\n"
-                "Follow the arrows while executing the cells. A tool result or validation failure "
-                "is an observation, not an instruction that the model may bypass.\n"
+                f"## Architecture of this lesson\n\n```text\n{ARCHITECTURES[folder]}\n```\n\n"
+                f"{architecture}. A tool result or validation failure is an observation, "
+                "not an instruction the model may bypass.\n"
             ]},
         ]
         cells = [source_cells[0], *intro]
         step = 0
+        previous_was_bonus = False
         for cell in source_cells[1:]:
             if cell["cell_type"] == "code":
-                notes = STEP_NOTES[folder]
-                note = notes[min(step, len(notes) - 1)]
-                step += 1
-                cells.append({"cell_type": "markdown", "metadata": {}, "source": [
-                    f"## Step {step} — {note.split(';')[0].rstrip('.')}\n\n{note}\n"
-                ]})
+                if not previous_was_bonus:  # a bonus heading already introduces its cell
+                    notes = STEP_NOTES[folder]
+                    note = notes[min(step, len(notes) - 1)]
+                    step += 1
+                    cells.append({"cell_type": "markdown", "metadata": {}, "source": [
+                        f"## Step {step} — {note.split(';')[0].rstrip('.')}\n\n{note}\n"
+                    ]})
+                previous_was_bonus = False
+            else:
+                previous_was_bonus = "".join(cell["source"]).lstrip().startswith("## Bonus")
             cells.append(cell)
         cells.extend([
-            {"cell_type": "markdown", "metadata": {}, "source": [
-                f"## Execution flow\n\n{architecture}. "
-                "Read the printed result together with the task, selected tool, state, or trace. "
-                "If the result differs, locate the first boundary where the observed value changed.\n"
-            ]},
             {"cell_type": "markdown", "metadata": {}, "source": [
                 f"## Failure mode to know about\n\n{FAILURES[folder]}\n"
             ]},

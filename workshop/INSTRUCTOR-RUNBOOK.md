@@ -26,7 +26,29 @@ Each topic begins with the notebook's **Problem → Concept → Architecture** c
 | M8, 3:35–4:15 | `11-observability`, `12-evaluation` | Local trace and deterministic evaluation results |
 | Capstone, 4:15–5:00 | `13-project`, `14-capstone` | End-to-end report; assigned faulty checks repaired |
 
+**Bonus scenarios.** Each basic lesson ends with an optional bonus cell that applies the same concept to a lighter, different problem (a trip, a job ad, a party order). They are listed in the [README](README.md#bonus-scenarios-one-per-basic-lesson). Use them as the "Your turn" demo when the room is ahead; skip them when behind. The no-model ones (8 Flow, 10 Resilience, 12 Evaluation) always run in seconds. On a local 4B model the model-backed ones can take one to five minutes, and the Knowledge (5) and Crew (7) bonuses are the slowest, so run those as a demonstration rather than hands-on.
+
+**One model for the whole workshop.** Every notebook and script uses the same chat model, `ollama/qwen2.5:7b`, plus `nomic-embed-text` for embeddings. The default is defined once in `workshop/common.py` (`DEFAULT_MODEL`) and can be overridden with `WORKSHOP_MODEL` in `.env`; NeMo, Ragas and the prerequisite check read the same value. All 23 notebooks were executed end to end on it.
+
+**Why not a thinking model.** Thinking-capable local models such as `qwen3.5:4b` can spend the whole output budget on hidden reasoning and return an empty answer ("Invalid response from LLM call - None or empty"), or take minutes for one call. In the authoring test on a Windows laptop, `qwen3.5:4b` returned an empty answer after 330 s for a one-line prompt, and CrewAI's `LLM` does not accept a `think=False` switch, while `qwen2.5:7b` answered the same prompt in 30 s. It needs roughly 5 GB for the download and about 8 GB of free RAM, so check the laptops (the pre-work already asks for a model pull). If a laptop is too small, switch to a smaller non-thinking model in `.env` and rehearse it first; do not switch models mid-lesson.
+
 The resilience slot is a guided demonstration. It requires timing the interruption after task one; do not make every attendee repeat a slow local model run. In the capstone, assign one or two faults to each pair and use `14-capstone/INSTRUCTOR.md` for the whole-room debrief.
+
+## Advanced follow-up (optional second session)
+
+Run only after the basic path. Each lesson extends one basic step; open the basic notebook first as a reminder, then the advanced one.
+
+| Order | Advanced folder | Extends basic step | Observable proof |
+| --- | --- | --- | --- |
+| 1 | `17-lancedb-rag` | 5 Knowledge | Real source IDs, distinct from CrewAI Knowledge |
+| 2 | `19-nemo-guardrails` | 9 Control | Input/output checks stay outside authorization |
+| 3 | `18-state` | 10 Resilience | Approvals survive restart; cache is disposable |
+| 4 | `20-langfuse` | 11 Observability | Remote trace appears; local trace works offline |
+| 5 | `21-ragas` | 12 Evaluation | Quality score kept separate from safety gates |
+| 6 | `15-api`, `16-ui`, `22-podman` | 13 Project | Requests cannot approve their own action; UI shows cited evidence; Compose describes the services |
+| 7 | `14-capstone` | all | Assigned faults repaired; whole-room debrief |
+
+Steps 1–4, 6, 7 and 8 have no advanced follow-up. `14-capstone` is in the basic day's 4:15–5:00 slot; use it as the closing exercise of the advanced session only if the basic day did not reach it. The advanced folders need live services (Ollama embeddings, Postgres, Redis, Langfuse, Podman); rehearse them separately.
 
 ## Recovery and escalation in the room
 
