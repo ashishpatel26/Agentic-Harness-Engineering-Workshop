@@ -6,6 +6,8 @@ import os
 import json
 from pathlib import Path
 
+from workshop.common import model_name
+
 
 def load_cases() -> list[dict[str, str]]:
     path = Path(__file__).resolve().parent / "evals" / "factual_cases.json"
@@ -23,7 +25,7 @@ async def factual_score(response: str, reference: str) -> float:
     from ragas.llms import llm_factory
     from ragas.metrics.collections import FactualCorrectness
 
-    model = os.getenv("WORKSHOP_MODEL", "ollama/qwen3.5:4b")
+    model = model_name()
     if not model.startswith("ollama/"):
         raise ValueError("This local evaluation example requires Ollama")
     base_url = os.getenv("WORKSHOP_MODEL_BASE_URL", "http://localhost:11434").rstrip("/")

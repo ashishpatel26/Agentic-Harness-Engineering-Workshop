@@ -42,7 +42,7 @@ Install OS-level [uv](https://docs.astral.sh/uv/getting-started/installation/) a
 
 ```bash
 uv sync --locked --python 3.12
-ollama pull qwen3.5:4b
+ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 uv run python tools/check_prerequisites.py --offline
 uv run python tools/check_prerequisites.py
@@ -54,7 +54,7 @@ Start the Ollama service before the full check. Follow [README.md](README.md#sta
 The default local model configuration belongs in the ignored `.env` file (copy from [`.env.example`](.env.example)), not in a notebook or a hard-coded Python constant:
 
 ```dotenv
-WORKSHOP_MODEL=ollama/qwen3.5:4b
+WORKSHOP_MODEL=ollama/qwen2.5:7b
 WORKSHOP_MODEL_BASE_URL=http://localhost:11434
 WORKSHOP_EMBEDDING_PROVIDER=ollama
 WORKSHOP_EMBEDDING_MODEL=nomic-embed-text
@@ -62,7 +62,7 @@ WORKSHOP_OLLAMA_EMBED_URL=http://localhost:11434/api/embeddings
 CREWAI_TRACING_ENABLED=false
 ```
 
-`qwen3.5:4b` is the CrewAI and NeMo chat model; `nomic-embed-text` is the Knowledge/Memory/LanceDB embedding model. NeMo reads the `WORKSHOP_MODEL` and `WORKSHOP_MODEL_BASE_URL` values and appends `/v1` for Ollama's OpenAI-compatible API. The full prerequisite check confirms the service and both model downloads. NeMo stays off until `WORKSHOP_NEMO_ENABLED=true`.
+`qwen2.5:7b` is the CrewAI and NeMo chat model; `nomic-embed-text` is the Knowledge/Memory/LanceDB embedding model. NeMo reads the `WORKSHOP_MODEL` and `WORKSHOP_MODEL_BASE_URL` values and appends `/v1` for Ollama's OpenAI-compatible API. The full prerequisite check confirms the service and both model downloads. NeMo stays off until `WORKSHOP_NEMO_ENABLED=true`.
 
 The LanceDB retrieval tool is also opt-in: set `WORKSHOP_LANCEDB_RAG_ENABLED=true` to index the fictional documents and expose the tool to the Crew. Redis is used only by the ROI tool and falls back to the same Python calculation if the cache is absent.
 

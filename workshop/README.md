@@ -30,14 +30,14 @@ Diagrams and concept notes are notebook-only; executable code stays synchronized
 
 - `uv` installed at OS level.
 - Python 3.12, installed automatically by `uv` if needed.
-- Primary model path: Ollama and a tool-capable model such as `qwen3.5:4b`, plus `nomic-embed-text` for Knowledge and Memory. Confirm that this pair works on the actual workshop laptops before the event. A hosted model can replace the chat model, but the embedding provider must also be configured explicitly.
+- Primary model path: Ollama and a tool-capable model, `qwen2.5:7b`, plus `nomic-embed-text` for Knowledge and Memory. Confirm that this pair works on the actual workshop laptops before the event. A hosted model can replace the chat model, but the embedding provider must also be configured explicitly.
 - Run script commands from the repository root. Notebooks work from any folder inside the repository: each finds the repository root by looking upward for `pyproject.toml`, so VS Code's default (kernel starts in the notebook's own folder) is fine. Select the project's `.venv` Python as the kernel.
 
 ## Windows setup (PowerShell)
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\setup-windows.ps1
-ollama pull qwen3.5:4b
+ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 uv run python workshop\00-verify\1-verify_setup.py
 ```
@@ -63,7 +63,7 @@ a `lib64` symbolic link that Windows cannot replace cleanly.
 ```bash
 uv sync --locked --python 3.12
 test -f .env || cp .env.example .env
-ollama pull qwen3.5:4b
+ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 uv run python workshop/00-verify/1-verify_setup.py
 ```

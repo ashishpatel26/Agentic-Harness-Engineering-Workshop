@@ -44,7 +44,7 @@ The [technology stack and setup guide](setup.md) distinguishes the runnable core
 | **uv** on your operating system | Installs the locked Python environment and runs every command | [Official uv installation guide](https://docs.astral.sh/uv/getting-started/installation/) |
 | **Python 3.12** | The workshop pins 3.12; `uv` can install it for you | `uv sync --locked --python 3.12` |
 | **Ollama** for the default local path | Serves the chat and embedding models | [Official Ollama download](https://ollama.com/download) |
-| **[`qwen3.5:4b`](https://ollama.com/library/qwen3.5:4b)** and **[`nomic-embed-text`](https://ollama.com/library/nomic-embed-text)** | Chat/tool use and Knowledge/Memory embeddings | `ollama pull qwen3.5:4b` and `ollama pull nomic-embed-text` |
+| **[`qwen2.5:7b`](https://ollama.com/library/qwen2.5:7b)** and **[`nomic-embed-text`](https://ollama.com/library/nomic-embed-text)** | Chat/tool use and Knowledge/Memory embeddings | `ollama pull qwen2.5:7b` and `ollama pull nomic-embed-text` |
 | **A terminal and Jupyter-capable editor** | Runs scripts and notebooks | JupyterLab is installed by `uv sync` |
 
 The **core track** needs no container engine, PostgreSQL, Qdrant, or separate SQLite installation. CrewAI's local Knowledge storage uses the installed Chroma package; Python supplies SQLite. Workshop runtime files are kept under ignored `workshop/.workshop-data/`. See the [CrewAI Knowledge documentation](https://docs.crewai.com/v1.15.22/en/concepts/knowledge) for the distinction between built-in Knowledge storage and optional vector-store integrations.
@@ -55,7 +55,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and [Ollam
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\setup-windows.ps1
-ollama pull qwen3.5:4b
+ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 uv run python tools\check_prerequisites.py
 uv run python workshop\00-verify\1-verify_setup.py
@@ -70,7 +70,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and [Ollam
 ```bash
 uv sync --locked --python 3.12
 test -f .env || cp .env.example .env
-ollama pull qwen3.5:4b
+ollama pull qwen2.5:7b
 ollama pull nomic-embed-text
 uv run python tools/check_prerequisites.py
 uv run python workshop/00-verify/1-verify_setup.py
